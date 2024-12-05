@@ -5,8 +5,14 @@ const exphbs = require('express-handlebars');
 const app = express();
 
 // Set up Handlebars
-app.engine('handlebars', exphbs.engine());
+app.engine('handlebars', exphbs.engine({
+    layoutsDir: path.join(__dirname, 'views/layouts')
+}));
 app.set('view engine', 'handlebars');
+app.set('views', [
+    path.join(__dirname, 'views'),
+    path.join(__dirname, 'views/groups')
+]);
 
 // Serve static files
 app.use(express.static('public'));
