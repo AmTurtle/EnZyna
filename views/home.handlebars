@@ -1,0 +1,103 @@
+<section class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">EnZyna</h1>
+        <div class="hero-subtitle">Virtual Stars, Real Dreams</div>
+    </div>
+    <div class="scroll-indicator" id="scrollIndicator">
+        <span>Scroll to Explore</span>
+        <div class="scroll-arrow"></div>
+    </div>
+</section>
+
+<section class="groups-section">
+    <div id="lumera" class="group-container lumera">
+        <div class="group-content">
+            <h2 class="group-title">Lumera</h2>
+            <p class="group-description">Guardians of Light</p>
+            <a href="/lumera" class="group-link">Explore Lumera →</a>
+        </div>
+        <div class="diagonal-accent"></div>
+    </div>
+
+    <div id="umbra" class="group-container umbra">
+        <div class="group-content">
+            <h2 class="group-title">Umbra</h2>
+            <p class="group-description">Keepers of Shadow</p>
+            <a href="/umbra" class="group-link">Explore Umbra →</a>
+        </div>
+        <div class="diagonal-accent"></div>
+    </div>
+
+    <div id="stella" class="group-container stella">
+        <div class="group-content">
+            <h2 class="group-title">Stella</h2>
+            <p class="group-description">Children of Stars</p>
+            <a href="/stella" class="group-link">Explore Stella →</a>
+        </div>
+        <div class="diagonal-accent"></div>
+    </div>
+
+    <div id="solis" class="group-container solis">
+        <div class="group-content">
+            <h2 class="group-title">Solis</h2>
+            <p class="group-description">Bearers of Sun</p>
+            <a href="/solis" class="group-link">Explore Solis →</a>
+        </div>
+        <div class="diagonal-accent"></div>
+    </div>
+</section>
+
+<script>
+    // Scroll indicator click handler
+    document.getElementById('scrollIndicator').addEventListener('click', () => {
+        document.getElementById('lumera').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Intersection Observer for section visibility
+    const observerOptions = {
+        root: null,
+        rootMargin: '-20% 0px',
+        threshold: 0.5
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Remove active class from all nav links
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
+                });
+                
+                // Add active class to current section's nav link
+                const currentLink = document.querySelector(`.nav-link[data-section="${entry.target.id}"]`);
+                if (currentLink) {
+                    currentLink.classList.add('active');
+                }
+
+                // Add visible class to the section for animations
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+
+    // Observe all group containers
+    document.querySelectorAll('.group-container').forEach(section => {
+        observer.observe(section);
+    });
+
+    // Hide scroll indicator when scrolling past hero section
+    const heroObserver = new IntersectionObserver((entries) => {
+        const scrollIndicator = document.getElementById('scrollIndicator');
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) {
+                scrollIndicator.style.opacity = '0';
+                scrollIndicator.style.pointerEvents = 'none';
+            } else {
+                scrollIndicator.style.opacity = '1';
+                scrollIndicator.style.pointerEvents = 'auto';
+            }
+        });
+    }, { threshold: 0.8 });
+
+    heroObserver.observe(document.querySelector('.hero-section'));
+</script>
