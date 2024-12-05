@@ -60,18 +60,42 @@
         threshold: 0.5
     };
 
-    const observer = new IntersectionObserver((entries) => {
+    // Create separate observer for hero section
+    const heroObserver = new IntersectionObserver((entries) => {
+        const scrollIndicator = document.getElementById('scrollIndicator');
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                // Remove active class from all nav links
+                // Remove active class from all nav links when in hero section
                 document.querySelectorAll('.nav-link').forEach(link => {
                     link.classList.remove('active');
                 });
-                
-                // Add active class to current section's nav link
-                const currentLink = document.querySelector(`.nav-link[data-section="${entry.target.id}"]`);
-                if (currentLink) {
-                    currentLink.classList.add('active');
+                scrollIndicator.style.opacity = '1';
+                scrollIndicator.style.pointerEvents = 'auto';
+            } else {
+                scrollIndicator.style.opacity = '0';
+                scrollIndicator.style.pointerEvents = 'none';
+            }
+        });
+    }, { threshold: 0.8 });
+
+    // Observer for group sections
+    const groupObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Only add active class if not in hero section
+                const heroSection = document.querySelector('.hero-section');
+                const heroRect = heroSection.getBoundingClientRect();
+                if (heroRect.bottom <= 0) {
+                    // Remove active class from all nav links
+                    document.querySelectorAll('.nav-link').forEach(link => {
+                        link.classList.remove('active');
+                    });
+                    
+                    // Add active class to current section's nav link
+                    const currentLink = document.querySelector(`.nav-link[data-section="${entry.target.id}"]`);
+                    if (currentLink) {
+                        currentLink.classList.add('active');
+                    }
                 }
 
                 // Add visible class to the section for animations
@@ -80,24 +104,11 @@
         });
     }, observerOptions);
 
+    // Observe hero section
+    heroObserver.observe(document.querySelector('.hero-section'));
+
     // Observe all group containers
     document.querySelectorAll('.group-container').forEach(section => {
-        observer.observe(section);
+        groupObserver.observe(section);
     });
-
-    // Hide scroll indicator when scrolling past hero section
-    const heroObserver = new IntersectionObserver((entries) => {
-        const scrollIndicator = document.getElementById('scrollIndicator');
-        entries.forEach(entry => {
-            if (!entry.isIntersecting) {
-                scrollIndicator.style.opacity = '0';
-                scrollIndicator.style.pointerEvents = 'none';
-            } else {
-                scrollIndicator.style.opacity = '1';
-                scrollIndicator.style.pointerEvents = 'auto';
-            }
-        });
-    }, { threshold: 0.8 });
-
-    heroObserver.observe(document.querySelector('.hero-section'));
 </script>

@@ -13,14 +13,14 @@
     
     <header class="site-header">
         <div class="header-diagonal"></div>
-        <nav class="nav-wiki">
+        <nav class="nav-bar">
             <div class="nav-container">
                 <a href="/" class="logo">EnZyna</a>
                 <div class="nav-links">
-                    <a href="#lumera" class="nav-link" data-section="lumera">Lumera</a>
-                    <a href="#umbra" class="nav-link" data-section="umbra">Umbra</a>
-                    <a href="#stella" class="nav-link" data-section="stella">Stella</a>
-                    <a href="#solis" class="nav-link" data-section="solis">Solis</a>
+                    <a href="/lumera" class="nav-link" data-section="lumera">Lumera</a>
+                    <a href="/umbra" class="nav-link" data-section="umbra">Umbra</a>
+                    <a href="/stella" class="nav-link" data-section="stella">Stella</a>
+                    <a href="/solis" class="nav-link" data-section="solis">Solis</a>
                 </div>
             </div>
         </nav>
@@ -32,22 +32,27 @@
 
     <footer class="site-footer">
         <div class="footer-container">
-            <p>2024 EnZyna</p>
+            <p>&copy; 2024 EnZyna</p>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const section = document.querySelector(this.getAttribute('href'));
-                if (section) {
-                    section.scrollIntoView({
-                        behavior: 'smooth'
-                    });
+        // Navigation and scroll handling
+        const isHomePage = document.querySelector('.hero-section') !== null;
+
+        // Handle navigation links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                if (isHomePage) {
+                    e.preventDefault();
+                    const sectionId = link.getAttribute('data-section');
+                    const section = document.getElementById(sectionId);
+                    if (section) {
+                        section.scrollIntoView({ behavior: 'smooth' });
+                    }
                 }
+                // On other pages, let the link work normally (no preventDefault)
             });
         });
 
@@ -73,6 +78,62 @@
                 }
             });
         });
+
+        // Footer visibility control
+        const footer = document.querySelector('.site-footer');
+
+        if (isHomePage) {
+            // Home page behavior - hide initially and show on scroll
+            footer.style.opacity = '0';
+
+            const debounce = (func, wait) => {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            };
+
+            const showFooter = () => {
+                requestAnimationFrame(() => {
+                    footer.classList.add('visible');
+                    footer.style.opacity = '1';
+                    footer.style.pointerEvents = 'auto';
+                });
+            };
+
+            const hideFooter = () => {
+                requestAnimationFrame(() => {
+                    footer.classList.remove('visible');
+                    footer.style.opacity = '0';
+                    footer.style.pointerEvents = 'none';
+                });
+            };
+
+            const checkScroll = debounce(() => {
+                const mainContent = document.querySelector('.site-main');
+                const scrollPosition = mainContent.scrollTop + mainContent.clientHeight;
+                const threshold = 50; // pixels from bottom to trigger footer
+                const isNearBottom = mainContent.scrollHeight - scrollPosition <= threshold;
+                
+                if (isNearBottom) {
+                    showFooter();
+                } else {
+                    hideFooter();
+                }
+            }, 100);
+
+            document.querySelector('.site-main').addEventListener('scroll', checkScroll);
+        } else {
+            // Other pages behavior - always visible
+            footer.style.opacity = '1';
+            footer.classList.add('visible');
+            footer.style.pointerEvents = 'auto';
+        }
     </script>
 </body>
 </html>
