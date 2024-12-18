@@ -13,3 +13,33 @@
         </div>
     </div>
 </div>
+
+<section class="character-section"></section>
+  <div class="character-header">
+    <div class="character-info">
+      <h2>Characters</h2>
+      <h1>02</h1>
+    </div>
+    <div class="character-image">
+      <img src="{{imagePath}}" alt="Character Image" />
+    </div>
+  </div>
+  <div class="character-details">
+    <div class="details-text">
+      <h3>Faction Unknown</h3>
+      <h2>Jane Doe</h2>
+    </div>
+    <div class="action-button">
+      <a href="{{moreInfoLink}}" class="view-more">View More</a>
+    </div>
+  </div>
+  <div class="character-carousel">
+    <button class="carousel-button prev">&lt;</button>
+    <div class="carousel-images">
+      {{#each thumbnails}}
+        <img src="{{this}}" class="{{#if @first}}active{{/if}}" alt="Thumbnail" />
+      {{/each}}
+    </div>
+    <button class="carousel-button next">&gt;</button>
+  </div>
+</section>
